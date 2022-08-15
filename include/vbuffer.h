@@ -1,3 +1,19 @@
+/*  A small library to use variable size types safely.
+    Copyright (C) 2022 SpacePython12
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
+
 #ifndef _VBUFFER_H_
 #define _VBUFFER_H_ 1
 
@@ -19,6 +35,7 @@ typedef struct vbuffer_t {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 // INIT/DEINIT
 
 // Allocates a new vbuffer. Returns NULL if allocation failed.
@@ -28,16 +45,16 @@ vbuffer_t *vbuffer_from(void * data, size_t size);
 // Frees a vbuffer.
 void vbuffer_free(vbuffer_t *vb);
 
+
 // PROPERTY ACCESSORS
 
-// Returns the size of the vbuffer.
-size_t vbuffer_size(vbuffer_t *vb);
 // Returns the capacity of the vbuffer.
 size_t vbuffer_capacity(vbuffer_t *vb);
 // Returns the a copy of the data of the vbuffer. The caller is responsible for freeing the memory.
 void *vbuffer_data(vbuffer_t *vb);
 // Returns SIZE bytes of the data of the vbuffer, offset by OFFSET. The caller is responsible for freeing the memory.
 void *vbuffer_ndata(vbuffer_t *vb, size_t offset, size_t size);
+
 
 // METHODS
 
@@ -100,7 +117,9 @@ long double vbuffer_get_ldouble(vbuffer_t *vb, size_t position);
 // Puts a long double into the vbuffer at POSITION.
 void vbuffer_put_ldouble(vbuffer_t *vb, size_t position, long double value);
 
+
 // IO FUNCTIONS
+
 #ifdef _STDIO_H
 #define VBUFFER_RW_ALL 0
 // Writes the vbuffer to a file. The buffer is resized to the size of the written data.

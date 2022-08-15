@@ -1,3 +1,19 @@
+/*  A small library to use variable size types safely.
+    Copyright (C) 2022 SpacePython12
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +28,7 @@ vbuffer_t *vbuffer_new(size_t size) {
         return NULL;
     }
     vb->data = malloc(size);
+    memset(vb->data, 0, size);
     if (vb->data == NULL) {
         free(vb);
         return NULL;
@@ -40,7 +57,7 @@ size_t vbuffer_capacity(vbuffer_t *vb) {
 
 void *vbuffer_data(vbuffer_t *vb) {
     void * ret = malloc(vbuffer_capacity(vb));
-    memcpy(ret, vb->data, vbuffer_size(vb));
+    memcpy(ret, vb->data, vbuffer_capacity(vb));
     return ret;
 }
 
@@ -60,17 +77,17 @@ void vbuffer_clear(vbuffer_t *vb) {
 }
 
 vbuffer_t * vbuffer_duplicate(vbuffer_t *vb) {
-    return vbuffer_from(vbuffer_data(vb), vbuffer_size(vb));
+    return vbuffer_from(vbuffer_data(vb), vbuffer_capacity(vb));
 }
 
 size_t vbuffer_get_array(vbuffer_t *vb, size_t position, void *data, size_t size) {
-    size_t to_copy = size - (position + size > vbuffer_size(vb) ? vbuffer_size(vb) - position : size); // bounds check
+    size_t to_copy = size - (position + size > vbuffer_capacity(vb) ? vbuffer_capacity(vb) - position : size); // bounds check
     memcpy(data, vb->data + position, to_copy);
     return to_copy;
 }
 
 size_t vbuffer_set_array(vbuffer_t *vb, size_t position, void *data, size_t size) {
-    size_t to_copy = size - (position + size > vbuffer_size(vb) ? vbuffer_size(vb) - position : size); // bounds check
+    size_t to_copy = size - (position + size > vbuffer_capacity(vb) ? vbuffer_capacity(vb) - position : size); // bounds check
     memcpy(vb->data + position, data, to_copy);
     return to_copy;
 }
