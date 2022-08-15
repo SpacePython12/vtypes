@@ -12,7 +12,6 @@
 // A dynamic buffer that can be used to store data in a memory safe way. It is not recommended to access the buffer directly, but rather use the vbuffer_* functions.
 typedef struct vbuffer_t {
     void *data; // The data in the buffer.
-    size_t size; // The amount of data in the buffer.
     size_t capacity; // The capacity of the buffer.
 } vbuffer_t;
 
@@ -52,10 +51,10 @@ vbuffer_t *vbuffer_duplicate(vbuffer_t *vb);
 
 // DATA ACCESSORS
 
-// Gets SIZE bytes from the vbuffer into DATA, starting at POSITION. 
-void vbuffer_get_array(vbuffer_t *vb, size_t position, void *data, size_t size);
-// Puts SIZE bytes from DATA into the vbuffer, starting at POSITION.
-void vbuffer_put_array(vbuffer_t *vb, size_t position, void *data, size_t size);
+// Gets SIZE bytes from the vbuffer into DATA, starting at POSITION. Returns the number of bytes read.
+size_t vbuffer_get_array(vbuffer_t *vb, size_t position, void *data, size_t size);
+// Puts SIZE bytes from DATA into the vbuffer, starting at POSITION. Returns the number of bytes written.
+size_t vbuffer_put_array(vbuffer_t *vb, size_t position, void *data, size_t size);
 // Gets an int8 from the vbuffer at POSITION.
 int8_t vbuffer_get_int8(vbuffer_t *vb, size_t position);
 // Puts an int8 into the vbuffer at POSITION.
@@ -97,26 +96,37 @@ double vbuffer_get_double(vbuffer_t *vb, size_t position);
 // Puts a double into the vbuffer at POSITION.
 void vbuffer_put_double(vbuffer_t *vb, size_t position, double value);
 // Gets a long double from the vbuffer at POSITION.
-long double vbuffer_get_long_double(vbuffer_t *vb, size_t position);
+long double vbuffer_get_ldouble(vbuffer_t *vb, size_t position);
 // Puts a long double into the vbuffer at POSITION.
-void vbuffer_put_long_double(vbuffer_t *vb, size_t position, long double value);
+void vbuffer_put_ldouble(vbuffer_t *vb, size_t position, long double value);
 
 // IO FUNCTIONS
 #ifdef _STDIO_H
-// Writes the vbuffer to a file.
-void vbuffer_fwrite(vbuffer_t *vb, FILE *file);
+#define VBUFFER_RW_ALL 0
+// Writes the vbuffer to a file. The buffer is resized to the size of the written data.
+ssize_t vbuffer_fwrite(vbuffer_t *vb, FILE *file);
+// Writes SIZE bytes from the vbuffer to a file, starting in the file at POSITION, and starting in the buffer at OFFSET.
+ssize_t vbuffer_fnwrite(vbuffer_t *vb, size_t position, size_t offset, size_t size, FILE *file);
 // Reads into the vbuffer from a file.
-void vbuffer_fread(vbuffer_t *vb, FILE *file);
+ssize_t vbuffer_fread(vbuffer_t *vb, FILE *file);
+// Reads SIZE bytes from the vbuffer to a file, starting in the file at POSITION, and starting in the buffer at OFFSET.
+ssize_t vbuffer_fnread(vbuffer_t *vb, size_t position, size_t offset, size_t size, FILE *file);
 #endif
 #ifdef _UNISTD_H
-// Writes the vbuffer to a file descriptor.
-void vbuffer_write(vbuffer_t *vb, int fd);
-// Reads into the vbuffer from a file descriptor.
-void vbuffer_read(vbuffer_t *vb, int fd);
-
+#ifndef VBUFFER_RW_ALL
+#define VBUFFER_RW_ALL 0
+#endif
+// Writes the vbuffer to a file. The buffer is resized to the size of the written data.
+ssize_t vbuffer_write(vbuffer_t *vb, int fd);
+// Writes SIZE bytes from the vbuffer to a file, starting in the file at POSITION, and starting in the buffer at OFFSET.
+ssize_t vbuffer_nwrite(vbuffer_t *vb, size_t position, size_t offset, size_t size, int fd);
+// Reads into the vbuffer from a file.
+ssize_t vbuffer_read(vbuffer_t *vb, int fd);
+// Reads SIZE bytes from the vbuffer to a file, starting in the file at POSITION, and starting in the buffer at OFFSET.
+ssize_t vbuffer_nread(vbuffer_t *vb, size_t position, size_t offset, size_t size, int fd);
+#endif
 #ifdef __cplusplus
 }
 #endif
 
-#endif
 #endif
