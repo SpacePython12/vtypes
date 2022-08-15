@@ -116,7 +116,10 @@ void vbuffer_put_double(vbuffer_t *vb, size_t position, double value);
 long double vbuffer_get_ldouble(vbuffer_t *vb, size_t position);
 // Puts a long double into the vbuffer at POSITION.
 void vbuffer_put_ldouble(vbuffer_t *vb, size_t position, long double value);
-
+// Gets a null terminated string from the vbuffer at POSITION.
+char * vbuffer_get_string(vbuffer_t *vb, size_t position);
+// Puts a null terminated string into the vbuffer at POSITION.
+void vbuffer_put_string(vbuffer_t *vb, size_t position, char *value);
 
 // IO FUNCTIONS
 
