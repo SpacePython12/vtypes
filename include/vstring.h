@@ -74,28 +74,16 @@ int vstring_icompare_string(vstring *vsa, char *cstring, size_t len);
 // Detects instances of a vstring in another vstring. Returns the number of instances found.
 size_t vstring_count(vstring *vsa, vstring *vsb);
 // Detects instances of a vstring in another vstring, ignoring case. Returns the number of instances found.
-size_t vstring_icount(vstring *vsa, vstring *vsb);
-// Detects instances of a C-string in a vstring. Returns the number of instances found.
 size_t vstring_count_string(vstring *vsa, char *cstring, size_t len);
 // Detects instances of a C-string in a vstring, ignoring case. Returns the number of instances found.
-size_t vstring_icount_string(vstring *vsa, char *cstring, size_t len);
-// Detects instances of a character in a vstring. Returns the number of instances found.
 size_t vstring_count_char(vstring *vsa, char c);
 // Detects instances of a character in a vstring, ignoring case. Returns the number of instances found.
-size_t vstring_icount_char(vstring *vsa, char c);
-// Finds all instances of a vstring in another vstring. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
 size_t vstring_find(vstring *vsa, vstring *vsb, size_t **positions);
 // Finds all instances of a vstring in another vstring, ignoring case. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
-size_t vstring_ifind(vstring *vsa, vstring *vsb, size_t **positions);
-// Finds all instances of a C-string in a vstring. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
 size_t vstring_find_string(vstring *vsa, char *cstring, size_t len, size_t **positions);
 // Finds all instances of a C-string in a vstring, ignoring case. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
-size_t vstring_ifind_string(vstring *vsa, char *cstring, size_t len, size_t **positions);
-// Finds all instances of a character in a vstring. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
 size_t vstring_find_char(vstring *vsa, char c, size_t **positions);
 // Finds all instances of a character in a vstring, ignoring case. Returns the number of instances found, and stores the positions in the array pointed to by POSITIONS.
-size_t vstring_ifind_char(vstring *vsa, char c, size_t **positions);
-// Replaces instances of a vstring in another vstring with another vstring.
 void vstring_replace(vstring *vsa, vstring *vsb, vstring *vsc);
 // Replaces instances of a C-string in another vstring with a C-string.
 void vstring_replace_string(vstring *vsa, char *cstringa, size_t lena, char *cstringb, size_t lenb);
