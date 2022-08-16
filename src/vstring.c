@@ -6,7 +6,7 @@
 
 // https://stackoverflow.com/a/779960
 // You must free the result if result is non-NULL.
-void str_replace(char **target, size_t targetlen, const char *rep, size_t replen, const char *with, size_t withlen) {
+size_t str_replace(char **target, size_t targetlen, const char *rep, size_t replen, const char *with, size_t withlen) {
     char *orig = *target;
     char *result; // the return string
     char *ins;    // the next insert point
@@ -54,10 +54,11 @@ void str_replace(char **target, size_t targetlen, const char *rep, size_t replen
         free(*target);
         *target = result;
     }
+    return count;
 }
 
-vstring *vstring_new() {
-    vstring *vs = malloc(sizeof(vstring));
+vstring_t *vstring_new() {
+    vstring_t *vs = malloc(sizeof(vstring_t));
     if (vs == NULL) {
         return NULL;
     }
@@ -66,8 +67,8 @@ vstring *vstring_new() {
     return vs;
 }
 
-vstring *vstring_from(char *data, size_t len) {
-    vstring *vs = vstring_new();
+vstring_t *vstring_from(char *data, size_t len) {
+    vstring_t *vs = vstring_new();
     if (vs == NULL) {
         return NULL;
     }
@@ -81,7 +82,7 @@ vstring *vstring_from(char *data, size_t len) {
     return vs;
 }
 
-void vstring_set(vstring *vstr, char *data, size_t len) {
+void vstring_set(vstring_t *vstr, char *data, size_t len) {
     vstr->data = malloc(len);
     if (vstr->data == NULL) {
         return;
@@ -90,16 +91,16 @@ void vstring_set(vstring *vstr, char *data, size_t len) {
     vstr->length = len;
 }
 
-void vstring_free(vstring *vs) {
+void vstring_free(vstring_t *vs) {
     free(vs->data);
     free(vs);
 }
 
-size_t vstring_length(vstring *vs) {
+size_t vstring_length(vstring_t *vs) {
     return vs->length;
 }
 
-char *vstring_data(vstring *vs) {
+char *vstring_data(vstring_t *vs) {
     char * data = malloc(vs->length);
     if (data == NULL) {
         return NULL;
@@ -107,7 +108,7 @@ char *vstring_data(vstring *vs) {
     memcpy(data, vs->data, vs->length);
 }
 
-char *vstring_ndata(vstring *vs, size_t offset, size_t size) {
+char *vstring_ndata(vstring_t *vs, size_t offset, size_t size) {
     char * data = malloc(size);
     if (data == NULL) {
         return NULL;
@@ -115,7 +116,7 @@ char *vstring_ndata(vstring *vs, size_t offset, size_t size) {
     memcpy(data, vs->data + offset, size);
 }
 
-void vstring_append(vstring *vsa, vstring *vsb) {
+void vstring_append(vstring_t *vsa, vstring_t *vsb) {
     char *data = malloc(vsa->length + vsb->length);
     if (data == NULL) {
         return;
@@ -127,7 +128,7 @@ void vstring_append(vstring *vsa, vstring *vsb) {
     vsa->length += vsb->length;
 }
 
-void vstring_append_string(vstring *vsa, char *str, size_t len) {
+void vstring_append_string(vstring_t *vsa, char *str, size_t len) {
     char *data = malloc(vsa->length + len);
     if (data == NULL) {
         return;
@@ -139,7 +140,7 @@ void vstring_append_string(vstring *vsa, char *str, size_t len) {
     vsa->length += len;
 }
 
-void vstring_append_char(vstring *vsa, char c) {
+void vstring_append_char(vstring_t *vsa, char c) {
     char *data = malloc(vsa->length + 1);
     if (data == NULL) {
         return;
@@ -151,113 +152,113 @@ void vstring_append_char(vstring *vsa, char c) {
     vsa->length += 1;
 }
 
-int vstring_compare(vstring *vsa, vstring *vsb) {
+int vstring_compare(vstring_t *vsa, vstring_t *vsb) {
     return strncmp(vsa->data, vsb->data, min(vsa->length, vsb->length));
 }
 
-int vstring_compare_string(vstring *vsa, char *str, size_t len) {
+int vstring_compare_string(vstring_t *vsa, char *str, size_t len) {
     return strncmp(vsa->data, str, min(vsa->length, len));
 }
 
-int vstring_icompare(vstring *vsa, vstring *vsb) {
+int vstring_icompare(vstring_t *vsa, vstring_t *vsb) {
     return strncasecmp(vsa->data, vsb->data, min(vsa->length, vsb->length));
 }
 
-int vstring_icompare_string(vstring *vsa, char *str, size_t len) {
+int vstring_icompare_string(vstring_t *vsa, char *str, size_t len) {
     return strncasecmp(vsa->data, str, min(vsa->length, len));
 }
-
-size_t basic_count(vstring * vsa, char check, char * str, size_t len, int (*compare)(char *, char *, size_t)) {
+// basic counting function
+size_t basic_count(vstring_t * vsa, char check, char * str, size_t len, int (*compare)(char *, char *, size_t)) {
     size_t count = 0;
-    for (size_t i = 0; i < vsa->length; i++) {
-        if (vsa->data[i] == check) {
-            if (compare(vsa->data + i, str, len) == 0) {
-                count++;
+    for (size_t i = 0; i < vsa->length; i++) { // Iterate through the string
+        if (vsa->data[i] == check) { // Is the current character the check character?
+            if (compare(vsa->data + i, str, len) == 0) { // Compare the current character to the string
+                count++; // If they match, increment the count
             }
         }
     }
     return count;
 }
-
-size_t basic_find(vstring * vsa, char check, char * str, size_t len, size_t ** positions, int (*compare)(char *, char *, size_t)) {
+// basic searching function
+size_t basic_find(vstring_t * vsa, char check, char * str, size_t len, size_t ** positions, int (*compare)(char *, char *, size_t)) {
     size_t ret = 0;
-    *positions = malloc(0);
-    for (size_t i = 0; i < vsa->length; i++) {
-        if (vsa->data[i] == check) {
-            if (compare(vsa->data + i, str, len) == 0) {
-                *positions = realloc(*positions, (ret + 1) * sizeof(size_t));
-                (*positions)[ret] = i;
-                ret++;
+    *positions = malloc(0); // Allocate memory for the positions array (not really lol)
+    for (size_t i = 0; i < vsa->length; i++) { // Iterate through the string
+        if (vsa->data[i] == check) { // Is the current character the check character?
+            if (compare(vsa->data + i, str, len) == 0) { // Compare the current character to the string
+                *positions = realloc(*positions, (ret + 1) * sizeof(size_t)); // Allocate memory for the position
+                (*positions)[ret] = i; // Set the position
+                ret++; // Increment the count
             }
         }
     }
     return ret;
 }
-
+// For use with char compare
 int dummy_compare(char *a, char *b, size_t len) {
     return 0;
 }
 
-size_t vstring_count(vstring *vsa, vstring *vsb) {
+size_t vstring_count(vstring_t *vsa, vstring_t *vsb) {
     return basic_count(vsa, vsb->data[0], vsb->data, vsb->length, &strncmp);
 }
 
-size_t vstring_count_string(vstring *vsa, char *str, size_t len) {
+size_t vstring_count_string(vstring_t *vsa, char *str, size_t len) {
     return basic_count(vsa, str[0], str, len, &strncmp);
 }
 
-size_t vstring_count_char(vstring *vsa, char c) {
+size_t vstring_count_char(vstring_t *vsa, char c) {
     return basic_count(vsa, c, NULL, 0, &dummy_compare);
 }
 
-size_t vstring_find(vstring *vsa, vstring * vsb, size_t ** positions) {
+size_t vstring_find(vstring_t *vsa, vstring_t * vsb, size_t ** positions) {
     return basic_find(vsa, vsb->data[0], vsb->data, vsb->length, positions, &strncmp);
 }
 
-size_t vstring_find_string(vstring *vsa, char *str, size_t len, size_t ** positions) {
+size_t vstring_find_string(vstring_t *vsa, char *str, size_t len, size_t ** positions) {
     return basic_find(vsa, str[0], str, len, positions, &strncmp);
 }
 
-size_t vstring_find_char(vstring *vsa, char c, size_t ** positions) {
+size_t vstring_find_char(vstring_t *vsa, char c, size_t ** positions) {
     return basic_find(vsa, c, NULL, 0, positions, &dummy_compare);
 }
 
-vstring * vstring_lower(vstring *vsa) {
-    vstring *ret = vstring_from(vsa->data, vsa->length);
+vstring_t * vstring_lower(vstring_t *vsa) {
+    vstring_t *ret = vstring_from(vsa->data, vsa->length);
     for (size_t i = 0; i < vsa->length; i++) {
         ret->data[i] = tolower(vsa->data[i]);
     }
     return ret;
 }
 
-vstring * vstring_upper(vstring *vsa) {
-    vstring *ret = vstring_from(vsa->data, vsa->length);
+vstring_t * vstring_upper(vstring_t *vsa) {
+    vstring_t *ret = vstring_from(vsa->data, vsa->length);
     for (size_t i = 0; i < vsa->length; i++) {
         ret->data[i] = toupper(vsa->data[i]);
     }
     return ret;
 }
 
-void vstring_replace(vstring *vsa, vstring *vsb, vstring *vsc) {
+size_t vstring_replace(vstring_t *vsa, vstring_t *vsb, vstring_t *vsc) {
     str_replace(&vsa->data, vsa->length, vsb->data, vsb->length, vsc->data, vsc->length);
 }
 
-void vstring_replace_string(vstring *vsa, char *str, size_t len, char * str2, size_t len2) {
+size_t vstring_replace_string(vstring_t *vsa, char *str, size_t len, char * str2, size_t len2) {
     str_replace(&vsa->data, vsa->length, str, len, str2, len2);
 }
 
-void vstring_replace_char(vstring *vsa, char c, char c2) {
+size_t vstring_replace_char(vstring_t *vsa, char c, char c2) {
     str_replace(&vsa->data, vsa->length, &c, 1, &c2, 1);
 }
 
-void vstring_remove(vstring *vsa, vstring *vsb) {
+size_t vstring_remove(vstring_t *vsa, vstring_t *vsb) {
     str_replace(&vsa->data, vsa->length, vsb->data, vsb->length, "", 0);
 }
 
-void vstring_remove_string(vstring *vsa, char *str, size_t len) {
+size_t vstring_remove_string(vstring_t *vsa, char *str, size_t len) {
     str_replace(&vsa->data, vsa->length, str, len, "", 0);
 }
 
-void vstring_remove_char(vstring *vsa, char c) {
+size_t vstring_remove_char(vstring_t *vsa, char c) {
     str_replace(&vsa->data, vsa->length, &c, 1, "", 0);
 }
