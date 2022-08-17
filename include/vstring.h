@@ -24,7 +24,14 @@
 typedef struct vstring_t {
     char *data;
     size_t length;
+    char flags;
 } vstring_t;
+
+typedef enum vstring_flags {
+    VSTRING_NOFLAGS,
+    VSTRING_TEMP = (1 << 0), // Free this vstring in the next function it is used in
+    // TODO: add more flags
+} vstringFlags;
 
 // check for c++, if not use extern
 #ifdef __cplusplus
@@ -33,10 +40,10 @@ extern "C" {
 
 // INIT/DEINIT
 
-// Allocates a new vstring. Returns NULL if allocation failed.
-vstring_t *vstring_new();
+// Allocates a new vstring. Returns NULL if allocation failed. The caller is responsible for freeing the memory.
+vstring_t *vstring_new(size_t len);
 // Allocates a new vstring and copies LEN bytes from DATA into it.
-vstring_t *vstring_from(char *data, size_t len);
+vstring_t *vstring_from(char *data, size_t len, vstring_flags flags);
 // Sets the data of the vstring to DATA, and sets the length to LEN.
 void vstring_set(vstring_t *vstr, char *data, size_t len);
 // Frees a vstring.

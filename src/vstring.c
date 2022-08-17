@@ -57,17 +57,17 @@ size_t str_replace(char **target, size_t targetlen, const char *rep, size_t repl
     return count;
 }
 
-vstring_t *vstring_new() {
+vstring_t *vstring_new(size_t len) {
     vstring_t *vs = malloc(sizeof(vstring_t));
     if (vs == NULL) {
         return NULL;
     }
-    vs->data = malloc(0);
-    vs->length = 0;
+    vs->data = malloc(len);
+    vs->length = len;
     return vs;
 }
 
-vstring_t *vstring_from(char *data, size_t len) {
+vstring_t *vstring_from(char *data, size_t len, vstring_flags flags) {
     vstring_t *vs = vstring_new();
     if (vs == NULL) {
         return NULL;
@@ -79,10 +79,11 @@ vstring_t *vstring_from(char *data, size_t len) {
     }
     memcpy(vs->data, data, len);
     vs->length = len;
+    vs->flags = flags;
     return vs;
 }
 
-void vstring_set(vstring_t *vstr, char *data, size_t len) {
+void vstring_set(vstring_t *vstr, const char *data, size_t len) {
     vstr->data = malloc(len);
     if (vstr->data == NULL) {
         return;
@@ -94,6 +95,12 @@ void vstring_set(vstring_t *vstr, char *data, size_t len) {
 void vstring_free(vstring_t *vs) {
     free(vs->data);
     free(vs);
+}
+
+void vstring_free_if_flag(vstring_t * vs) {
+    if (vs & (0b11111110)) {
+        vstring_free(vs);
+    }
 }
 
 size_t vstring_length(vstring_t *vs) {
@@ -116,19 +123,7 @@ char *vstring_ndata(vstring_t *vs, size_t offset, size_t size) {
     memcpy(data, vs->data + offset, size);
 }
 
-void vstring_append(vstring_t *vsa, vstring_t *vsb) {
-    char *data = malloc(vsa->length + vsb->length);
-    if (data == NULL) {
-        return;
-    }
-    memcpy(data, vsa->data, vsa->length);
-    memcpy(data + vsa->length, vsb->data, vsb->length);
-    free(vsa->data);
-    vsa->data = data;
-    vsa->length += vsb->length;
-}
-
-void vstring_append_string(vstring_t *vsa, char *str, size_t len) {
+void basic_append(vstring_t * vs, const char * str, size_t len) {
     char *data = malloc(vsa->length + len);
     if (data == NULL) {
         return;
@@ -140,23 +135,23 @@ void vstring_append_string(vstring_t *vsa, char *str, size_t len) {
     vsa->length += len;
 }
 
-void vstring_append_char(vstring_t *vsa, char c) {
-    char *data = malloc(vsa->length + 1);
-    if (data == NULL) {
-        return;
-    }
-    memcpy(data, vsa->data, vsa->length);
-    data[vsa->length] = c;
-    free(vsa->data);
-    vsa->data = data;
-    vsa->length += 1;
+void vstring_append(vstring_t *vsa, vstring_t *vsb) {
+    basic_append(vsa, vsb->data, vsb->length);
+}
+
+void vstring_append_string(vstring_t *vsa, const char *str, size_t len) {
+    basic_append(vsa, str, len);
+}
+
+void vstring_append_char(vstring_t *vsa, const char c) {
+    basic_append(vsa, &c, 1);
 }
 
 int vstring_compare(vstring_t *vsa, vstring_t *vsb) {
     return strncmp(vsa->data, vsb->data, min(vsa->length, vsb->length));
 }
 
-int vstring_compare_string(vstring_t *vsa, char *str, size_t len) {
+int vstring_compare_string(vstring_t *vsa, const char *str, size_t len) {
     return strncmp(vsa->data, str, min(vsa->length, len));
 }
 
@@ -164,7 +159,7 @@ int vstring_icompare(vstring_t *vsa, vstring_t *vsb) {
     return strncasecmp(vsa->data, vsb->data, min(vsa->length, vsb->length));
 }
 
-int vstring_icompare_string(vstring_t *vsa, char *str, size_t len) {
+int vstring_icompare_string(vstring_t *vsa, const char *str, size_t len) {
     return strncasecmp(vsa->data, str, min(vsa->length, len));
 }
 // basic counting function
