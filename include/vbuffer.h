@@ -123,6 +123,8 @@ void vbuffer_put_string(vbuffer_t *vb, size_t position, char *value);
 
 // IO FUNCTIONS
 
+#define VBUFFER_RW_ALL 0
+
 #ifdef _STDIO_H
 #define VBUFFER_RW_ALL 0
 // Writes the vbuffer to a file. The buffer is resized to the size of the written data.
@@ -135,9 +137,6 @@ ssize_t vbuffer_fread(vbuffer_t *vb, FILE *file);
 ssize_t vbuffer_fnread(vbuffer_t *vb, size_t position, size_t offset, size_t size, FILE *file);
 #endif
 #ifdef _UNISTD_H
-#ifndef VBUFFER_RW_ALL
-#define VBUFFER_RW_ALL 0
-#endif
 // Writes the vbuffer to a file. The buffer is resized to the size of the written data.
 ssize_t vbuffer_write(vbuffer_t *vb, int fd);
 // Writes SIZE bytes from the vbuffer to a file, starting in the file at POSITION, and starting in the buffer at OFFSET.
