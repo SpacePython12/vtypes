@@ -14,28 +14,27 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
-#ifndef _VSTACK_H_
-#define _VSTACK_H_ 1
+#ifndef _VAQUEUE_H_
+#define _VAQUEUE_H_ 1
 
-#ifndef _VARRAY_H_
-#error "vstack.h needs varray.h included before it."
-#endif
+#include "varray.h"
 
-#define vstack_push(inst, val)\
+#define vaqueue_add(inst, val)\
 {\
     varray_resize(inst, varray_len(inst)+1);\
     varray_at(inst, varray_len(inst)-1) = val;\
 }
 
-#define vstack_pop(inst, val)\
+#define vaqueue_rem(inst, val)\
 {\
-    varray_resize(inst, varray_len(inst)1);\
-    val = varray_at(inst, varray_len(inst));\ // Yes, it's a hack. Do I care? No. Can you stop me? Nope. Is it dangerous? Hell yes.
+    val = varray_at(inst, 0);\
+    memmove(varray_data(inst), varray_data(inst)+varray_tsize(inst), varray_len(inst)-varray_tsize(inst));\
+    varray_resize(inst, varray_len(inst)-1);\
 }
 
-#define vstack_peek(inst, val)\
+#define vaqueue_peek(inst, val)\
 {\
-    val varray_at(inst, varray_len(inst)-1);\
+    val = varray_at(inst, 0);\
 }
 
 #endif

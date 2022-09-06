@@ -14,30 +14,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
-#ifndef _VLIST_H_
-#define _VLIST_H_ 1
+#ifndef _VASTACK_H_
+#define _VASTACK_H_ 1
 
-#ifndef _VARRAY_H_
-#error "vlist.h needs varray.h included before it."
-#endif
+#include "varray.h"
 
-// Inserts a given value at the given index.
-#define vlist_insert(inst, ind, val)\
+#define vastack_push(inst, val)\
 {\
     varray_resize(inst, varray_len(inst)+1);\
-    memmove(varray_data(inst)+(ind*varray_tsize(inst))+varray_tsize(inst), varray_data(inst)+(ind*varray_tsize(inst)), varray_len(inst)-ind);\
-    varray_at(inst, ind) = val;\
+    varray_at(inst, varray_len(inst)-1) = val;\
 }
-// Removes the value at the given index.
-#define vlist_remove(inst, ind)\
+
+#define vastack_pop(inst, val)\
 {\
-    memmove(varray_data(inst)+(ind*varray_tsize(inst))-varray_tsize(inst), varray_data(inst)+(ind*varray_tsize(inst)), varray_len(inst)-ind);\
+    val = varray_at(inst, varray_len(inst)-1);\
     varray_resize(inst, varray_len(inst)-1);\
 }
-// Insert a value at the end of the list.
-#define vlist_add(inst, val)\
+
+#define vastack_peek(inst, val)\
 {\
-    vlist_insert(inst, varray_len(inst), val);\
+    val = varray_at(inst, varray_len(inst)-1);\
 }
 
 #endif
