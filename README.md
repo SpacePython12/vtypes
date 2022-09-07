@@ -1,10 +1,15 @@
 # VTypes
 
-VTypes is a C/C++ library for dynamic data structures, aiming to be memory safe, compact, and fast. It takes inspiration from many `java.util` data types, and has a similar interface.
+VTypes is a C/C++ library for dynamic collection types, aiming to be memory safe, compact, and fast. It takes inspiration from the Java standard library, and aims to have a similar interface.
 ## Features:
-* A buffer type (`vbuffer`), which has support for resizing, input and output of several data types, and much more.
-* A string type (`vstring`) with a builtin length attribute, and several quality of life functions, such as concatenation, comparison, string count, find, string replace, string remove, and others.
-* *A dynamic array type (`varray`) that has random access and searching functions.
+* An array type, with a data pointer and size values.
+    * A list interface, with insertion/deletion methods.
+    * A stack interface, with push, pop, and peek.
+    * A queue interface, with add, remove, and peek.
+    * A heap interface, with type get/put methods.
+* A linked list interface, similar to the array but with linked lists.*
+* A map and tree interface.*
+* A string interface.*
 
 <sub>* Not implemented yet.</sub>
 
@@ -16,7 +21,7 @@ VTypes is a C/C++ library for dynamic data structures, aiming to be memory safe,
 * You can put the library in your project folder, and compile with `-lvtypes`.
 
 # Usage: 
-### vbuffer usage
+### vbuffer usage (outdated)
 ```c
 // Optionally, include these before the vtypes headers for IO functions.
 #include <stdio.h> // for FILE * operations
