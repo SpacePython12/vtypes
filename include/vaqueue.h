@@ -19,22 +19,11 @@
 
 #include "varray.h"
 
-#define vaqueue_add(inst, val)\
-{\
-    varray_resize(inst, varray_len(inst)+1);\
-    varray_at(inst, varray_len(inst)-1) = val;\
-}
-
-#define vaqueue_rem(inst, val)\
-{\
-    val = varray_at(inst, 0);\
-    memmove(varray_data(inst), varray_data(inst)+varray_tsize(inst), varray_len(inst)-varray_tsize(inst));\
-    varray_resize(inst, varray_len(inst)-1);\
-}
-
-#define vaqueue_peek(inst, val)\
-{\
-    val = varray_at(inst, 0);\
-}
+// Pushes VAL to INST.
+extern inline void vaqueue_push(varray * inst, vague_t val);
+// Returns and removes the head of INST, advancing the rest of the queue.
+extern inline vague_t vaqueue_pop(varray * inst);
+// Peeks at the head of INST, and puts it into VAL.
+extern inline vague_t vaqueue_peek(varray * inst);
 
 #endif

@@ -1,4 +1,4 @@
-build/libvtypes.a: build/vbuffer.o
+build/libvtypes.a: build/varray.o
 	mkdir -p build
 	gcc -fPIC -o $@ $^ -Iinclude -shared
 
@@ -8,7 +8,7 @@ build/%.o: src/%.c
 
 test: build/libvtypes.a
 	mkdir -p build
-	gcc test/testvbuffer.c -o build/test -Iinclude -Lbuild -lvtypes 
+	gcc test/testvarray.c -o build/test -Iinclude -Lbuild -lvtypes
 	build/test
 
 clean:

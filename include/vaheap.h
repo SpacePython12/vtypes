@@ -14,16 +14,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
-#ifndef _VASTACK_H_
-#define _VASTACK_H_ 1
+#ifndef _VAHEAP_H_
+#define _VAHEAP_H_ 1
 
 #include "varray.h"
 
-// Pushes VAL into INST.
-extern inline void vastack_push(varray * inst, vague_t val);
-// Pops from INST into VAL.
-extern inline vague_t vastack_pop(varray * inst);
-// Peeks into the top of INST, and places the result in VAL.
-extern inline vague_t vastack_peek(varray * inst);
+#define vaheap_get(T, inst, pos, val) {if (!(pos + sizeof(T) > varray_len(inst)/sizeof(T))) {val = *(T *)(varray_data(inst) + pos);}}
+#define vaheap_put(T, inst, pos, val) {if (!(pos + sizeof(T) > varray_len(inst)/sizeof(T))) {*(T *)(varray_data(inst) + pos) = val;}}
+
+#define vaheap_get_bulk(inst, pos, ptr, len, copied) {size_t to_copy = len - (pos + len > varray_len(inst)/sizeof(T) ? varray_len(inst)*sizeof(T) - pos : len);memmove(ptr, varray_data(inst) + pos, to_copy);copied=to_copy;}
+#define vaheap_put_bulk(inst, pos, ptr, len, copied) {size_t to_copy = len - (pos + len > varray_len(inst)/sizeof(T) ? varray_len(inst)*sizeof(T) - pos : len);memmove(varray_data(inst) + pos, ptr, to_copy);copied=to_copy;}
 
 #endif

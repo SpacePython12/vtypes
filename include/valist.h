@@ -20,22 +20,12 @@
 #include "varray.h"
 
 // Inserts a given value at the given index in the arraylist.
-#define valist_insert(inst, ind, val)\
-{\
-    varray_resize(inst, varray_len(inst)+1);\
-    memmove(varray_data(inst)+(ind*varray_tsize(inst))+varray_tsize(inst), varray_data(inst)+(ind*varray_tsize(inst)), varray_len(inst)-ind);\
-    varray_at(inst, ind) = val;\
-}
-// Removes the value at the given index in the arraylist.
-#define valist_remove(inst, ind)\
-{\
-    memmove(varray_data(inst)+(ind*varray_tsize(inst))-varray_tsize(inst), varray_data(inst)+(ind*varray_tsize(inst)), varray_len(inst)-ind);\
-    varray_resize(inst, varray_len(inst)-1);\
-}
-// Insert a value at the end of the arraylist.
-#define valist_add(inst, val)\
-{\
-    valist_insert(inst, varray_len(inst), val);\
-}
+extern inline void valist_insert(varray * inst, size_t ind, vague_t val);
+// Removes the value at the given index in the arraylist. It is recommended to free the result.
+extern inline vague_t valist_remove(varray * inst, size_t ind);
+// Pushes a value on the end of the arraylist.
+extern inline void valist_push(varray * inst, vague_t val);
+// Pops a value from the end of the arraylist.
+extern inline vague_t valist_pop(varray * inst);
 
 #endif
