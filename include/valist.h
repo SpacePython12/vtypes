@@ -22,7 +22,7 @@
 // Inserts a given value at the given index in the arraylist.
 extern inline void valist_insert(varray * inst, size_t ind, vague_t val);
 // Removes the value at the given index in the arraylist. It is recommended to free the result.
-extern inline vague_t valist_remove(varray * inst, size_t ind);
+extern inline void valist_remove(varray * inst, size_t ind);
 // Pushes a value on the end of the arraylist.
 extern inline void valist_push(varray * inst, vague_t val);
 // Pops a value from the end of the arraylist.

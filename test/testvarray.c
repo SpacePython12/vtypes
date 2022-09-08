@@ -6,28 +6,31 @@
 #include "vutil.h"
 
 void testlist() {
-    char src[5] = {1,2,3,4,5};
-    varray * list = varray_initfrom(sizeof(char), 5, &src);
-    valist_push(list, vague_from(char, 6));
-    printf("List pop: %d\n", vague_to(char, valist_pop(list)));
-    valist_insert(list, 3, vague_from(char, 7));
-    printf("List remove: %d\n", vague_to(char, valist_remove(list, 3)));
+    short src[5] = {0xf0f1,0xf2f3,0xf4f5,0xf6f7,0xf8f9};
+    varray * list = varray_initfrom(sizeof(short), 5, &src);
+    valist_push(list, vague_from(short, 0xfafb));
+    printf("List pop: %x\n", vague_to(short, valist_pop(list)));
+    valist_insert(list, 3, vague_from(short, 0xfcfd));
+    valist_remove(list, 3);
+    varray_free(list);
 }
 
 void testqueue() {
-    char src[5] = {1,2,3,4,5};
-    varray * queue = varray_initfrom(sizeof(char), 5, &src);
-    vaqueue_push(queue, vague_from(char, 6));
-    printf("Queue peek: %d\n", vague_to(char, vaqueue_peek(queue)));
-    printf("Queue pop: %d\n", vague_to(char, vaqueue_pop(queue)));
+    short src[5] = {0xf0f1,0xf2f3,0xf4f5,0xf6f7,0xf8f9};
+    varray * queue = varray_initfrom(sizeof(short), 5, &src);
+    vaqueue_push(queue, vague_from(short, 0xfafb));
+    printf("Queue peek: %x\n", vague_to(short, vaqueue_peek(queue)));
+    printf("Queue pop: %x\n", vague_to(short, vaqueue_pop(queue)));
+    varray_free(queue);
 }
 
 void teststack() {
-    char src[5] = {1,2,3,4,5};
-    varray * stack = varray_initfrom(sizeof(char), 5, &src);
-    vastack_push(stack, vague_from(char, 6));
-    printf("Stack peek: %d\n", vague_to(char, vastack_peek(stack)));
-    printf("Stack pop: %d\n", vague_to(char, vastack_pop(stack)));
+    short src[5] = {0xf0f1,0xf2f3,0xf4f5,0xf6f7,0xf8f9};
+    varray * stack = varray_initfrom(sizeof(short), 5, &src);
+    vastack_push(stack, vague_from(short, 0xfafb));
+    printf("Stack peek: %x\n", vague_to(short, vastack_peek(stack)));
+    printf("Stack pop: %x\n", vague_to(short, vastack_pop(stack)));
+    varray_free(stack);
 }
 
 int main() {

@@ -27,12 +27,14 @@ typedef struct varray {
     size_t nmemb;
 } varray;
 
+typedef char * (*varray_printelem_fn) (vague_t);
+
 // Macro containing the element size of the given array.
 #define varray_esize(inst) ((inst)->esize)
 // Macro containing the raw pointer to the data of the given array. Use this only if you know what you are doing.
 #define varray_data(inst) ((inst)->data)
 // Macro containing the value at the given index in the given array.
-#define varray_at(inst, ind) ((inst)->data[ind*(inst)->esize])
+#define varray_at(inst, ind) ((inst)->data+(ind*(inst)->esize))
 // Macro containing the length of the given array. Don't write to this unless you know what you are doing.
 #define varray_len(inst) ((inst)->nmemb)
 
@@ -48,4 +50,10 @@ extern inline void varray_resize(varray * inst, size_t len);
 extern inline void varray_clear(varray * inst);
 // Sets the size of the given array to zero.
 extern inline void varray_reset(varray * inst);
+// Gets the value at the given index.
+extern inline vague_t varray_get(varray * inst, size_t ind);
+// Sets the value at the given index.
+extern inline void varray_set(varray * inst, size_t ind, vague_t val);
+// Shifts the internal contents of the array.
+extern inline void varray_shift(varray * inst, size_t ind, long amnt);
 #endif
